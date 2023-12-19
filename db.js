@@ -1,5 +1,4 @@
 const { MongoClient } = require("mongodb");
-const { stringify } = require("uuid");
 module.exports.getData = async (data) => {
     const uri = "mongodb+srv://abhay73986:5PiSzXE0sxHQZR8r@cluster0.yrueoz6.mongodb.net/mydb";
     const client = new MongoClient(uri, { useNewUrlParser: true });
