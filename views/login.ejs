@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On Board</title>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+    <div class="login card">
+        <div><b>LOGIN</b></div>
+        <br>
+        <form action="/login" method="POST">
+            <label for="username">Username</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="text" placeholder="Enter Username" name="username" id="loginId" required>
+            <br><br>
+
+            <label for="psw">Password</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="password" placeholder="Enter Password" name="psw" id="loginPassword" required>
+            <br><br>
+
+            <label class="rememberMe">
+                <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+            </label>
+            <br>
+            <button type="submit">Login</button>
+        </form>
+        <br>
+        New User ? <a onclick="signInForm()" href="#">Sign Up</a>
+    </div>
+
+    <div class="signUp card">
+        <div><b>SIGN UP</b></div>
+        <br>
+        <form>
+            <label for="username">Username</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="text" placeholder="Enter Username" name="username" id="signUpId" required>
+            <br><br>
+
+            <label for="psw">Password</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="password" placeholder="Enter Password" name="psw" id="signUpPassword" required>
+            <br><br>
+            <label for="psw-repeat">Repeat Password</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="password" placeholder="Repeat Password" name="psw-repeat" id="signUpPasswordRepeat" required>
+            <br><br>
+            <label class="rememberMe">
+                <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+            </label>
+            <br>
+            <button type="button" onclick="signup()">Sign Up</button>
+        </form>
+        <br>
+        Already Registered User ? <a onclick="loginForm()" href="#">Login</a>
+    </div>
+</body>
+<script src="https://origin-cdnh.policyboss.com/website/UI22/js/jquery-3.6.0.min.js"></script>
+<script>
+    function signInForm() {
+        $(".login").hide();
+        $(".signUp").show();
+    }
+    function loginForm() {
+        $(".login").show();
+        $(".signUp").hide();
+    }
+    function signup() {
+        if ($("#signUpPassword").val() === $("#signUpPasswordRepeat").val()) {
+            $.ajax({
+                url: "http://localhost:3000/signup",
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify({
+                    username: $("#signUpId").val(),
+                    password: $("#signUpPassword").val()
+                }),
+                dataType: "json",
+                success: (res) => {
+                    if(res.Status === "SUCCESS"){
+                        window.location.href = "/"
+                    }else{
+                        alert(JSON.stringify(res));
+                    }
+                }, error: (err) => {
+                    alert(JSON.stringify(err));
+                }
+            })
+        } else {
+            alert("Passwords are different");
+        }
+    }
+</script>
+
+</html>

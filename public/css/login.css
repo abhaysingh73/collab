@@ -1,0 +1,43 @@
+body{
+    /* font-family: serif; */
+    text-align: -webkit-center; 
+}
+input:not([type=checkbox]){
+    min-width: 5cm;
+    /* border-radius: 6px; */
+    min-height: 36px;
+    border: 1px solid #595353;
+    /* border: 1px 1px 0px 1px; */
+    border: none;
+    border-bottom: 1px solid;
+}
+label{
+    min-width: 20px;
+    font-size: 19px;
+}
+button{
+    min-width: 100px;
+    border-radius: 7px;
+    min-height: 36px;
+    background-color: #6767ba;
+    border: none;
+    color: white;
+}
+.card{
+    padding: 20px;
+    /* background-color: #b7b3bc; */
+    top: 100px;
+    position: relative;
+    max-width: 11cm;
+    max-height: 10cm;
+    text-align: center;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    /* padding: 2px 16px; */
+
+}
+.rememberMe{
+    font-size: 15px;
+}
+.signUp{
+    display: none;
+}

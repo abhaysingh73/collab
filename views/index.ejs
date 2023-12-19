@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+    <div class="main-box">
+        <div class="contactsListDiv">
+            <div>
+                <div class="header">
+                    <h1>People</h1>
+                </div>
+                <div class="contactsList">
+
+                </div>
+            </div>
+        </div>
+        <div class="main-container">
+            <div class="header">
+                <h1 class="chatingWith">Chat</h1>
+                <!-- <button>video call</button> -->
+            </div>
+            <div class="message-container" id="allmsgs"></div>
+            <div class="input-container">
+                <input type="text" id="message-input">
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://origin-cdnh.policyboss.com/website/UI22/js/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
+
+    <!-- <script src="js/web.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+    <script>
+        Notification.requestPermission();
+        var user;
+        var chatingWith;
+        var availableMessages;
+        const socket = io('http://localhost:3000');
+        var getSession = () => {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:3000/session",
+                    success: function (res) {
+                        user = res.user;
+                        resolve(res.user);
+                    },
+                    error: function (err) {
+                        reject(err);
+                    }
+                });
+            })
+        }
+        getContacts();
+        getSession().then(() => {
+            onloadfun();
+        }).catch(err => { console.log(err) });
+        var onloadfun = async () => {
+
+            socket.emit('getData', { user: user });
+            socket.on('loginRequired', () => {
+                const username = prompt('Enter your username:');
+                if (username) {
+                    window.location.href = `/login/${username}`;
+                }
+            });
+
+            socket.on('chatHistory', (content) => {
+                renderMessages(content);
+            });
+            socket.on('updatedChat', (updatedData) => {
+                updatedData = updatedData.content;
+                if(updatedData.to === user){
+                    const notification = new Notification("Hi",{body:updatedData.message.message,icon:"http://localhost:3000/images/"+updatedData.user + ".png"});
+                }
+                // renderMessages(content);
+                socket.emit('getData', { user: user });
+            });
+            socket.on('userJoined', (user) => {
+                // Notify that a new user has joined
+                alert(`${user} has joined the chat`);
+            });
+            socket.on('activeUsers', (users) => {
+                updateActiveUsers(users);
+            });
+        }
+
+        // web.js
+        const messageContainer = document.querySelector(".message-container");
+        const messageInput = document.querySelector("#message-input");
+        const sendButton = document.querySelector("#send-button");
+        var startDate
+
+        function appendMsg(message) {
+            var day = moment(message.timestamp,"YYYY-MM-DD").format("YYYY-MM-DD")
+            if(startDate !== day){
+                $(".message-container").append("<div style='color: grey;text-align: center;padding: 5px;}'>"+day+"</div><br>");
+                // const br = document.createElement("br");
+                // messageContainer.append(br);
+            }""
+            startDate = day;
+            var message = message;
+            if (!message) {
+                return;
+            }
+            const messageDiv = document.createElement("div");
+            let messageHeader;
+            if (message.user && message.direction == "out") {
+                messageDiv.classList.add("message");
+                messageHeader = document.createElement("div");
+                messageHeader.classList.add("message-header");
+                messageHeader.innerHTML = '<img height="1cm" width = "1cm" src="http://localhost:3000/images/' + message.user + '.png" style="height: 1cm;width: 1cm;"></img>' + message.user;
+
+            } else {
+                messageDiv.classList.add("other-message");
+                messageHeader = document.createElement("div");
+                messageHeader.classList.add("message-header");
+                messageHeader.innerHTML = '<img height="1cm" width = "1cm" src="http://localhost:3000/images/' + message.to + '.png" style="height: 1cm;width: 1cm;"></img>' + message.to;
+
+            }
+
+
+            const messageBody = document.createElement("div");
+            messageBody.classList.add("message-body");
+            messageBody.innerHTML = message.text;
+
+            const messageFooter = document.createElement("div");
+            messageFooter.classList.add("message-footer");
+            messageFooter.innerHTML = moment(message.timestamp).format("HH:mm");
+
+            messageDiv.appendChild(messageHeader);
+            messageDiv.appendChild(messageBody);
+            messageDiv.appendChild(messageFooter);
+
+            messageContainer.appendChild(messageDiv);
+            const br = document.createElement("br");
+            messageContainer.appendChild(br);
+
+            messageInput.value = "";
+            var elem = document.getElementById('allmsgs');
+            elem.scrollTop = elem.scrollHeight;
+        };
+
+
+        // Get Messages from Server
+        // function getMessages() {
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "http://localhost:3000/messages",
+        //         success: function (res) {
+        //             renderMessages(res);
+        //         },
+        //         error: function (err) {
+        //             console.log(err);
+        //         }
+        //     });
+        // }
+
+        // Render Messages
+        function renderMessages(messages) {
+            if (!messages) {
+                messages = availableMessages;
+            }
+            availableMessages = messages
+            messageContainer.innerHTML = "";
+            var msgObj = { user: messages.user, text: "", to: chatingWith }
+            if (messages.to[chatingWith] && messages.to[chatingWith].length > 0) {
+                messages.to[chatingWith].forEach(messageObj => {
+                    msgObj.text = messageObj.message;
+                    msgObj.timestamp = messageObj.timestamp;
+                    msgObj.direction = messageObj.direction;
+                    appendMsg(msgObj);
+                    //     const messageDiv = document.createElement("div");
+                    //     messageDiv.innerHTML = `
+                    //   <p><strong>${message.user}</strong>: ${message.text}</p>
+                    //   <p>${new Date(message.timestamp).toLocaleString()}</p>
+                    // `;
+
+                    //     messageContainer.appendChild(messageDiv);
+                });
+            }
+        }
+
+        // Send Message to Server
+        function sendMessage() {
+            var obj = {
+                text: messageInput.value,
+                user: user,//username,
+                timestamp: new Date()
+            }
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:3000/messages",
+                data: JSON.stringify(obj),
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    messageInput.value = "";
+                    // getMessages();
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        }
+
+        // sendButton.addEventListener("click", sendMessage);
+
+        sendButton.addEventListener('click', () => {
+            if ($("#message-input").val()) {
+                var obj = {
+                    user: user,//username,
+                    to: chatingWith,
+                    message: {
+                        message: messageInput.value,
+                        timestamp: new Date(),
+                        direction: "out"
+                    }
+                    ,
+                    modified_on: new Date()
+                }
+                socket.emit('updateChat', { content: obj });
+            }
+        });
+
+        const form = document.getElementById('myForm');
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const formData = new FormData();
+            formData.append('myFile', document.getElementById('myFile').files[0]);
+            formData.append('name', $('#myFile').val());
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://localhost:3000/upload', true);
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log('File uploaded successfully');
+                } else {
+                    console.error('File upload failed');
+                }
+            };
+
+            xhr.send(formData);
+        });
+
+        // Function to update the list of active users
+        function updateActiveUsers(users) {
+            $('#active-users').empty();
+            users.forEach(user => {
+                $('#active-users').append($('<li>').text(user));
+            });
+        }
+
+        function getContacts() {
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:3000/userList",
+                success: function (res) {
+                    populateContacts(res);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+        function populateContacts(contacts) {
+            for (var i in contacts) {
+                if (contacts[i]["username"] !== user) {
+                    $(".contactsList").append("<ul class='contact' onclick='chatwith(`" + contacts[i]["username"] + "`)'><div style='display: flex;'><img height='1cm' width = '1cm' src='http://localhost:3000/images/" + contacts[i].username + ".png' style='height: 1cm;width: 1cm;''></img><div style='padding: 10px;'>" + contacts[i]["username"] + "</div></div></ul>")
+                    chatingWith = contacts[i]["username"];
+                }
+            }
+            $(".chatingWith").html(chatingWith);
+        }
+        function chatwith(username) {
+            chatingWith = username;
+            renderMessages('');
+            $(".chatingWith").html(chatingWith);
+        }
+    </script>
+</body>
+
+</html>

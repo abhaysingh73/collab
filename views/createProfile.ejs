@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Profile Picture Upload</title>
+    <style>
+      .form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+      }
+      input[type="file"] {
+        padding: 10px;
+        margin-top: 20px;
+      }
+      input[type="text"] {
+        padding: 10px;
+        margin-top: 20px;
+        width: 200px;
+      }
+      input[type="submit"] {
+        padding: 10px 20px;
+        margin-top: 20px;
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <form id="myForm">
+        <input type="text" name="name" placeholder="Enter your name">
+        <input type="file" id="myFile" name="myFile">
+        <input type="submit" value="Upload">
+      </form>
+    </div>
+  </body>
+  <script src="https://origin-cdnh.policyboss.com/website/UI22/js/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+  <script src="/js/web.js"></script>
+</html>
