@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start":"node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,6 +15,5 @@
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "mongoose": "^7.5.2"
-  },
-  "start":"node app.js"
+  }
 }
