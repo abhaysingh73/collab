@@ -48,7 +48,7 @@
             return new Promise((resolve, reject) => {
                 $.ajax({
                     type: "GET",
-                    url: "http://localhost:3000/session",
+                    url: "https://teal-gorgeous-hatchling.cyclic.app/session",
                     success: function (res) {
                         user = res.user;
                         resolve(res.user);
@@ -79,7 +79,7 @@
             socket.on('updatedChat', (updatedData) => {
                 updatedData = updatedData.content;
                 if(updatedData.to === user){
-                    const notification = new Notification("Hi",{body:updatedData.message.message,icon:"http://localhost:3000/images/"+updatedData.user + ".png"});
+                    const notification = new Notification("Hi",{body:updatedData.message.message,icon:"https://teal-gorgeous-hatchling.cyclic.app/images/"+updatedData.user + ".png"});
                 }
                 // renderMessages(content);
                 socket.emit('getData', { user: user });
@@ -117,13 +117,13 @@
                 messageDiv.classList.add("message");
                 messageHeader = document.createElement("div");
                 messageHeader.classList.add("message-header");
-                messageHeader.innerHTML = '<img height="1cm" width = "1cm" src="http://localhost:3000/images/' + message.user + '.png" style="height: 1cm;width: 1cm;"></img>' + message.user;
+                messageHeader.innerHTML = '<img height="1cm" width = "1cm" src="https://teal-gorgeous-hatchling.cyclic.app/images/' + message.user + '.png" style="height: 1cm;width: 1cm;"></img>' + message.user;
 
             } else {
                 messageDiv.classList.add("other-message");
                 messageHeader = document.createElement("div");
                 messageHeader.classList.add("message-header");
-                messageHeader.innerHTML = '<img height="1cm" width = "1cm" src="http://localhost:3000/images/' + message.to + '.png" style="height: 1cm;width: 1cm;"></img>' + message.to;
+                messageHeader.innerHTML = '<img height="1cm" width = "1cm" src="https://teal-gorgeous-hatchling.cyclic.app/images/' + message.to + '.png" style="height: 1cm;width: 1cm;"></img>' + message.to;
 
             }
 
@@ -154,7 +154,7 @@
         // function getMessages() {
         //     $.ajax({
         //         type: "GET",
-        //         url: "http://localhost:3000/messages",
+        //         url: "https://teal-gorgeous-hatchling.cyclic.app/messages",
         //         success: function (res) {
         //             renderMessages(res);
         //         },
@@ -198,7 +198,7 @@
             }
             $.ajax({
                 type: "POST",
-                url: "http://localhost:3000/messages",
+                url: "https://teal-gorgeous-hatchling.cyclic.app/messages",
                 data: JSON.stringify(obj),
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -241,7 +241,7 @@
             formData.append('name', $('#myFile').val());
 
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'http://localhost:3000/upload', true);
+            xhr.open('POST', 'https://teal-gorgeous-hatchling.cyclic.app/upload', true);
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
@@ -265,7 +265,7 @@
         function getContacts() {
             $.ajax({
                 type: "GET",
-                url: "http://localhost:3000/userList",
+                url: "https://teal-gorgeous-hatchling.cyclic.app/userList",
                 success: function (res) {
                     populateContacts(res);
                 },
@@ -277,7 +277,7 @@
         function populateContacts(contacts) {
             for (var i in contacts) {
                 if (contacts[i]["username"] !== user) {
-                    $(".contactsList").append("<ul class='contact' onclick='chatwith(`" + contacts[i]["username"] + "`)'><div style='display: flex;'><img height='1cm' width = '1cm' src='http://localhost:3000/images/" + contacts[i].username + ".png' style='height: 1cm;width: 1cm;''></img><div style='padding: 10px;'>" + contacts[i]["username"] + "</div></div></ul>")
+                    $(".contactsList").append("<ul class='contact' onclick='chatwith(`" + contacts[i]["username"] + "`)'><div style='display: flex;'><img height='1cm' width = '1cm' src='https://teal-gorgeous-hatchling.cyclic.app/images/" + contacts[i].username + ".png' style='height: 1cm;width: 1cm;''></img><div style='padding: 10px;'>" + contacts[i]["username"] + "</div></div></ul>")
                     chatingWith = contacts[i]["username"];
                 }
             }
